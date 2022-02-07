@@ -1,0 +1,59 @@
+---
+title: "Cyclistic Data Analysis"
+author: "Daniel Christensen"
+date: "11/23/2021"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+trips <- read_csv(here("data","2020_q2-2021_q3_trip_data.csv"))
+```
+
+# Cyclistic Data Analysis
+
+## Purpose
+  Determine how casual riders and annual members use Cyclistic bikes differently. With these insights recommend how Cyclistic can convert casual riders into annual members. The Cyclistic fincance analysts have found that annual members are much more profitable than casual riders. 
+  
+## Main Findings:
+  There is no significant correlation between bike type and membership status however there is a strong connection between casual riders and the day of the week. Casual riders show significant trends in using the bikes on the weekend with a slight increase on Friday and a large increase on Saturdays and Sundays. Riders with an annual membership have a much more stable usage rate throughout the week. 
+
+```{r trips, echo=FALSE}
+trips %>% 
+  group_by(day) %>% 
+  ggplot(aes(x=factor(day
+    , levels = c("Mon","Tue","Wed","Thu","Fri", "Sat", "Sun"))))+
+  geom_bar(fill="deepskyblue3")+
+  geom_text(aes(label = ..count..), stat = "count", vjust = 1.5, size = 2.5)+
+  labs(x = "Day of the Week",y="No. of Trips", title = "Cyclistic Trips"
+    , subtitle = "Comparing weekday to membership status")+
+  facet_wrap(~member_casual)+
+  scale_y_continuous(labels = scales::comma)
+```
+
+\newpage
+There is also a connection between the average length of a ride using a Cyclistic bike and membership status. Casual riders tend to have a much longer trip than their annual member counterparts.
+
+```{r legnth, echo=FALSE}
+trips %>% 
+  group_by(member_casual) %>% 
+  summarise(avg_length_min = round(mean(ride_length_sec/60),1)) %>% 
+  arrange(desc(avg_length_min)) %>% 
+  ggplot(aes(x=member_casual, y=avg_length_min))+
+  geom_col(fill="deepskyblue3")+
+  geom_text(aes(label = avg_length_min), vjust = 1.5, size = 5)+
+  labs(x = "Membership Status", y = "Ride Length", title="Average Ride Length"
+       , subtitle = "Comparing membership status to ride length in minutes")
+```
+
+
+
+## Conclusion
+I would recommend to the marketing team to target riders on the weekend and offer a small sign-up bonus if they sign-up for an annual membership on Friday, Saturday or Sunday. I would also recommend an incentive targeting riders who take longer rides. An example of that might include a rewards program for members based on the length of your ride and alert casual riders to what they are missing out on.
+
+
+
+[Data](https://divvy-tripdata.s3.amazonaws.com/index.html) made available by Motivate International Inc. under this [license](https://www.divvybikes.com/data-license-agreement).

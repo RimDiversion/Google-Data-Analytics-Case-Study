@@ -1,0 +1,6 @@
+**/data/*
+.Rhistory
+.Rapp.history
+.Rdata
+.RdataTmp
+.Ruserdata
